@@ -1,0 +1,43 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 0.33
+        },
+        "#Boundary": {
+            "scaleInDock": 1
+        },
+        "#Station": {
+            "scaleInDock": 0.0625
+        },
+        "petrol station.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.5
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Admin/Documents/GitHub/Petrol-Station-Simulator/Assets",
+    "last.imagePath": "C:/Users/Admin/Documents/GitHub/Petrol-Station-Simulator/Assets",
+    "map.height": 90,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.tileHeight": 10,
+    "map.tileWidth": 10,
+    "map.width": 160,
+    "openFiles": [
+    ],
+    "project": "Petrol Station Boundaries.tiled-project",
+    "recentFiles": [
+        "petrol station.tsx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 10,
+        "width": 10
+    }
+}

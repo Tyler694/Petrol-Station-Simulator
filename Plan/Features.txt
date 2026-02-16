@@ -1,0 +1,14 @@
+Petrol Station Simulator:
+	Features:
+		Definitely make it Object Orientated!
+
+		Top-Down 2D Movement: ✔
+			Simple WASD movement. No Rotation.
+		Customers: 
+			Random AI. They should arrive in a car or walk. They need to buy something or pay for petrol.
+		Selling Items:
+			Have to stock shelves. Each Item needs to have a certain temperature.
+		Buying Stock:
+			Should be able to order different foods and shelves
+		Editable layout:
+			Can buy shelves and edit the layout of the station inside and outside. Should be able to click on objects.

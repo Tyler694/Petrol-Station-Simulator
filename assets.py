@@ -1,0 +1,1 @@
+PETROLSTATION = "Assets/petrol station.png"
