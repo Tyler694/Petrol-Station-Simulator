@@ -6,6 +6,9 @@ Petrol Station Simulator:
 			Simple WASD movement. No Rotation.
 		Customers: 
 			Random AI. They should arrive in a car or walk. They need to buy something or pay for petrol.
+			Pathfinding:
+				The customer needs to increase their X until it reaches the destination.
+
 		Selling Items:
 			Have to stock shelves. Each Item needs to have a certain temperature.
 		Buying Stock:
