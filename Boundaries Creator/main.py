@@ -13,11 +13,6 @@ index = 0
 
 tiles = []
 
-def createMapArray():
-    for i in range((HEIGHT//10)):
-        for j in range((WIDTH//10)):
-            tiles.append(0)
-
 def findTile():
     mouse_pos = pygame.mouse.get_pos()
 
@@ -29,39 +24,43 @@ def findTile():
     return mouseX, mouseY
 
 def drawTile(mouseX, mouseY):
-    mouse_pressed = pygame.mouse.get_pressed()
-    mouse_left_pressed = mouse_pressed[2]
-    mouse_right_pressed = mouse_pressed[0]
+    mouse = pygame.mouse.get_pressed()
+    mouse = mouse[0]
+    if mouse:
+        if len(tiles) == 0:
+            tiles.append((mouseX, mouseY))
+        elif tiles[len(tiles)-1] != (mouseX, mouseY):
+            tiles.append((mouseX, mouseY))
 
-    index = ((mouseY * (WIDTH // 10)) + mouseX) // 10
+def removeTile(mouseX,mouseY):
+    mouse = pygame.mouse.get_pressed()
+    mouse = mouse[2]
+    if mouse:
+        for tile in tiles:
+            if tile == (mouseX, mouseY):
+                tiles.remove(tile)
 
-    if mouse_right_pressed:
-        tiles[index] = (mouseX,mouseY)
-    if mouse_left_pressed:
-        tiles[index] = 0
+
+
     
 
 def drawMap():
+
     for tile in tiles:
         if tile != 0:
             pygame.draw.rect(screen, (255,0,0), (tile[0], tile[1], TILESIZE, TILESIZE))
 
-
-createMapArray()
-
 while running:
-    screen.blit(bg, (0,0))
+    screen.fill((50,50,50))
 
     mouseX, mouseY = findTile()
-    drawTile(mouseX, mouseY)
     
     drawMap()
+    drawTile(mouseX,mouseY)
+    removeTile(mouseX, mouseY)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            for index, tile in enumerate(tiles):
-                if tile != 0:
-                    tiles[index] = 1
             print(tiles) 
             running = False
 

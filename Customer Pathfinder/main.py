@@ -22,7 +22,7 @@ while running:
     customer.boundaryPositions = boundaries.boundaryPositions
 
     customer.draw()
-    #customer.findDestinationPosition()
+    customer.next_x_pos()
     
     clock.tick(60)
     pygame.display.flip()
