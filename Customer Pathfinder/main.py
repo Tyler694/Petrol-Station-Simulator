@@ -19,10 +19,8 @@ while running:
 
     boundaries.drawBoundaries()
 
-    customer.boundaryPositions = boundaries.boundaryPositions
-
     customer.draw()
-    customer.next_x_pos()
+    customer.pathfind()
     
     clock.tick(60)
     pygame.display.flip()

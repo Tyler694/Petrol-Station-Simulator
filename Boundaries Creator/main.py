@@ -1,7 +1,9 @@
 import pygame
+import pyperclip
 from settings import *
 
 screen = pygame.display.set_mode((RES))
+pygame.display.set_caption("Boundaries Creator - Tyler694")
 running = True
 
 bg = pygame.image.load(BG)
@@ -61,6 +63,7 @@ while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            pyperclip.copy(tiles)
             print(tiles) 
             running = False
 

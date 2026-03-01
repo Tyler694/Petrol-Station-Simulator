@@ -2,3 +2,4 @@ RES = WIDTH,HEIGHT = (1600, 900)
 TILESIZE = 10
 
 BG = "Assets/BG.png"
+
