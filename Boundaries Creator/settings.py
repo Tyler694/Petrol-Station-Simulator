@@ -1,5 +1,5 @@
 RES = WIDTH,HEIGHT = (1600, 900)
-TILESIZE = 10
+TILESIZE = 50
 
 BG = "Assets/BG.png"
 

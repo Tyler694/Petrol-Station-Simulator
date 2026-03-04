@@ -18,8 +18,8 @@ tiles = []
 def findTile():
     mouse_pos = pygame.mouse.get_pos()
 
-    mouseX = (mouse_pos[0] // 10) * 10
-    mouseY = (mouse_pos[1] // 10) * 10
+    mouseX = (mouse_pos[0] // TILESIZE) * TILESIZE
+    mouseY = (mouse_pos[1] // TILESIZE) * TILESIZE
 
     pygame.draw.rect(screen, (255,255,255), (mouseX, mouseY, TILESIZE, TILESIZE))
 
