@@ -6,10 +6,14 @@ class BoundariesClass():
         self.screen = pygame.display.get_surface()
 
     def drawBoundaries(self):
+        for i in range(HEIGHT // TILESIZE):
+            for j in range(WIDTH // TILESIZE):
+                pygame.draw.rect(self.screen, (50, 50, 50), (j*TILESIZE, i*TILESIZE, TILESIZE-1, TILESIZE-1))
+
         #LEVEL COLLISIONS
         for boundary in BOUNDARIES:
             pygame.draw.rect(self.screen, (255,0,0), (boundary[0], boundary[1], TILESIZE, TILESIZE))
 
-        for i in range(HEIGHT // 50):
-            for j in range(WIDTH // 50):
-                pygame.draw.rect(self.screen, (50, 50, 50), (j*TILESIZE, i*TILESIZE, TILESIZE-1, TILESIZE-1))
+        for node in NODE:
+            pygame.draw.rect(self.screen, (250,250,250), (node.x * TILESIZE, node.y * TILESIZE, TILESIZE-1, TILESIZE-1))
+
