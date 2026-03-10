@@ -14,6 +14,3 @@ class BoundariesClass():
         for boundary in BOUNDARIES:
             pygame.draw.rect(self.screen, (255,0,0), (boundary[0], boundary[1], TILESIZE, TILESIZE))
 
-        for node in NODE:
-            pygame.draw.rect(self.screen, (250,250,250), (node.x * TILESIZE, node.y * TILESIZE, TILESIZE-1, TILESIZE-1))
-

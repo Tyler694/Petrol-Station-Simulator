@@ -1,111 +1,105 @@
+import pygame
 from settings import *
 from node import *
 
 class Pathfind:
 
-    def __init__(self, agent):
-        self.agent = agent
+    def __init__(self):
+        self.start_pos = (10, 1)
+        self.end_pos = (10, 8)
 
-        self.start_pos = (agent.x, agent.y)
-        self.end_pos = (agent.dx, agent.dy)
+        self.nodes = []
+        self.TILES = []
 
-        self.start_H = abs(agent.x - self.start_pos[0]) + abs(agent.y - self.start_pos[1]) + abs(agent.x - self.end_pos[0]) + abs(agent.y - self.end_pos[1])
-        self.last_G = 0
+        self.screen = pygame.display.get_surface()
 
-        self.PERFECT_TILES = []
-
-        self.i = 0
-
-        self.first_tile()
+        self.first_node()
 
 
-    def first_tile(self):
-        for i in range(3):
-            for j in range(3):
-                self.x = (self.agent.x - 1) + j
-                self.y = (self.agent.y - 1) + i
-
-                if (j,i) != (1,1):
-                    NODE.append(Node(self.x, self.y, self.start_pos, self.end_pos))
-
-        LOWEST_H = NODE[0].H
-        for node in NODE:
-
-            node.calculate_weight()
-
-            if node.H < LOWEST_H:
-                LOWEST_H = node.H
-    
-        for node in NODE:
-            if node.H != LOWEST_H and node.H > self.start_H:
-                NODE.remove(node)
-
-        while len(NODE) != 1:
-            LOWEST_G = NODE[0].G
-            for node in NODE:
-                if node.G < LOWEST_G:
-                    LOWEST_G = node.G
-        
-            for node in NODE:
-                if node.G != LOWEST_G:
-                    NODE.remove(node)
-
-        self.x = NODE[0].x
-        self.y = NODE[0].y
-
-        self.last_G = NODE[0].G
-
-        self.PERFECT_TILES.append(NODE[0])
-        self.next_tile(self.x, self.y)
-
-    def next_tile(self, x, y):
-        NODE.clear()
-
-        for i in range(3):
-            for j in range(3):
-                self.x = (x - 1) + j
-                self.y = (y - 1) + i
-
-                if (j,i) != (1,1):
-                    NODE.append(Node(self.x, self.y, self.start_pos, self.end_pos))
-                    
-                
-            LOWEST_H = NODE[0].H
-            for node in NODE:
-                node.calculate_weight()
-
-                if node.H < LOWEST_H :
-                    LOWEST_H = node.H
-        
-            for node in NODE:
-                if node.H != LOWEST_H:
-                    NODE.remove(node)
-
-
-        while len(NODE) != 1:
-            LOWEST_G = NODE[0].G
-            for node in NODE:
-                if node.G < LOWEST_G and node.G < self.last_G:
-                    LOWEST_G = node.G
-        
-            for node in NODE:
-                if node.G != LOWEST_G:
-                    NODE.remove(node)
-
-        self.x = NODE[0].x
-        self.y = NODE[0].y
-        
-        self.last_G = NODE[0].G
-
-        if (self.x,self.y) != self.end_pos:
-            self.i += 1
-            self.PERFECT_TILES.append(NODE[0])
-            self.next_tile(self.x, self.y)
-
-
-                
-                    
 
     def draw(self):
-        for tile in self.PERFECT_TILES:
+        for tile in self.TILES:
             tile.draw()
+
+        pygame.draw.rect(self.screen, (255, 50, 50), (self.start_pos[0] * TILESIZE, self.start_pos[1] * TILESIZE, TILESIZE-1, TILESIZE-1))
+        pygame.draw.rect(self.screen, (50, 50, 255), (self.end_pos[0] * TILESIZE, self.end_pos[1] * TILESIZE, TILESIZE-1, TILESIZE-1))
+
+    def first_node(self):
+        for i in range(3):
+            for j in range(3):
+                x = ((self.start_pos[0] - 1) + j)
+                y = ((self.start_pos[1] - 1) + i)
+
+                if (j,i) != (1,1):
+                    self.nodes.append(Node(x, y, self.start_pos, self.end_pos))
+
+        self.nodes[0].get_values()
+        LOWEST_TOTAL_DIST = self.nodes[0].TOTAL_DIST
+        for node in self.nodes:
+            node.get_values()
+
+            if node.TOTAL_DIST < LOWEST_TOTAL_DIST:
+                LOWEST_TOTAL_DIST = node.TOTAL_DIST
+
+        LOWEST_DISTS = []
+        for node in self.nodes:
+            if node.TOTAL_DIST == LOWEST_TOTAL_DIST:
+                LOWEST_DISTS.append(node)
+
+        if len(LOWEST_DISTS) > 1:
+            LOWEST_END_DIST = LOWEST_DISTS[0].END_DIST
+            for node in LOWEST_DISTS:
+                if node.END_DIST < LOWEST_END_DIST:
+                    LOWEST_END_DIST = node.END_DIST
+        
+            LOWEST_DISTS.clear()
+            for node in self.nodes:
+                if node.END_DIST == LOWEST_END_DIST:
+                    self.TILES.append(node)
+                    self.next_node(node.x, node.y)
+        else:
+            self.TILES.append(LOWEST_DISTS[0])
+            self.next_node(LOWEST_DISTS[0].x, LOWEST_DISTS[0].y) 
+
+    def next_node(self, startX, startY):
+        self.nodes.clear()
+
+        for i in range(3):
+            for j in range(3):
+                x = (startX - 1) + j
+                y = (startY - 1) + i
+                
+                if (j,i) != (1,1):
+                    self.nodes.append(Node(x, y, self.start_pos, self.end_pos))
+
+                if (x,y) == self.end_pos:
+                    return
+
+        self.nodes[0].get_values()
+        LOWEST_TOTAL_DIST = self.nodes[0].TOTAL_DIST
+        for node in self.nodes:
+            node.get_values()
+
+            if node.TOTAL_DIST < LOWEST_TOTAL_DIST:
+                LOWEST_TOTAL_DIST = node.TOTAL_DIST
+
+        LOWEST_DISTS = []
+        for node in self.nodes:
+            if node.TOTAL_DIST == LOWEST_TOTAL_DIST:
+                LOWEST_DISTS.append(node)
+
+        print(LOWEST_DISTS[0].x)
+        if len(LOWEST_DISTS) > 1:
+            LOWEST_END_DIST = LOWEST_DISTS[0].END_DIST
+            for node in LOWEST_DISTS:
+                if node.END_DIST < LOWEST_END_DIST:
+                    LOWEST_END_DIST = node.END_DIST
+        
+            LOWEST_DISTS.clear()
+            for node in self.nodes:
+                if node.END_DIST == LOWEST_END_DIST:
+                    self.TILES.append(node)
+                    self.next_node(node.x, node.y)
+        else:
+            self.TILES.append(LOWEST_DISTS[0])
+            self.next_node(LOWEST_DISTS[0].x, LOWEST_DISTS[0].y) 
