@@ -27,7 +27,3 @@ class Node:
 
         if self.PLAYER_DIST == 20:
             self.PLAYER_DIST = 14
-
-        for boundary in BOUNDARIES:
-            if (self.x * TILESIZE, self.y * TILESIZE) == boundary:
-                self.TOTAL_DIST += 500

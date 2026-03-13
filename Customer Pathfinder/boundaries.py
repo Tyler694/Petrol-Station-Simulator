@@ -12,5 +12,5 @@ class BoundariesClass():
 
         #LEVEL COLLISIONS
         for boundary in BOUNDARIES:
-            pygame.draw.rect(self.screen, (255,0,0), (boundary[0], boundary[1], TILESIZE, TILESIZE))
+            pygame.draw.rect(self.screen, (255,0,0), (boundary[0], boundary[1], TILESIZE-1, TILESIZE-1))
 
