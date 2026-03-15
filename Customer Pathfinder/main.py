@@ -23,5 +23,6 @@ while running:
 
     pathfind.draw()
 
+
     clock.tick(60)
     pygame.display.flip()

@@ -1,29 +1,21 @@
-import pygame
-from settings import *
-
 class Node:
 
-    def __init__(self, x, y, start_pos, end_pos):
-        self.x = x
-        self.y = y
+    def __init__(self, pos, start_pos, end_pos):
+        self.DistToStart = 0
+        self.DistToEnd = 0
+        self.TotalDist = 0
 
+        self.pos = pos
         self.start_pos = start_pos
         self.end_pos = end_pos
 
-        self.PLAYER_DIST = 0
-        self.END_DIST = 0
-        self.TOTAL_DIST = 0
+        self.calculateDists()
 
-        self.screen = pygame.display.get_surface()
+    def calculateDists(self):
+        self.DistToStart = (abs(self.pos[0]-self.start_pos[0]) + abs(self.pos[1]-self.start_pos[1])) * 10
+        self.DistToEnd = (abs(self.pos[0]-self.end_pos[0]) + abs(self.pos[1]-self.end_pos[1])) * 10
 
-    def draw(self):
-        pygame.draw.rect(self.screen, (200, 200, 200), (self.x * TILESIZE, self.y * TILESIZE, TILESIZE-1, TILESIZE-1))
+        if self.DistToStart == 20:
+            self.DistToStart = 14
 
-    def get_values(self):
-        self.PLAYER_DIST = (abs(self.x - self.start_pos[0]) + abs(self.y - self.start_pos[1])) * 10
-        self.END_DIST = (abs(self.x - self.end_pos[0]) + abs(self.y - self.end_pos[1])) * 10
-
-        self.TOTAL_DIST = self.PLAYER_DIST + self.END_DIST
-
-        if self.PLAYER_DIST == 20:
-            self.PLAYER_DIST = 14
+        self.TotalDist = self.DistToStart + self.DistToEnd
