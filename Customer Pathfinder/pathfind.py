@@ -1,67 +1,79 @@
 import pygame
 from settings import *
 from node import *
-import random
 
 class Pathfind:
 
     def __init__(self):
-        self.Start_Pos = (15, 5)
-        self.End_Pos = (20, 5)
-
         self.nodes = []
-        self.route = []
+
+        self.start = (1, 2)
+        self.end = (10,1)
 
         self.i = 0
 
+        self.currentNodes = []
+        self.nodePositions = []
+
+        self.LOWEST_H_COST = 5000
+        self.LOWEST_G_COST = 5000
+
         self.screen = pygame.display.get_surface()
 
-        self.next_node(self.Start_Pos)
+        self.currentTile(self.start, 0)
 
-    def draw(self):
-        pygame.draw.rect(self.screen, (255, 50, 50), (self.Start_Pos[0] * TILESIZE, self.Start_Pos[1] * TILESIZE, TILESIZE-1, TILESIZE-1))
-        pygame.draw.rect(self.screen, (50, 50, 255), (self.End_Pos[0] * TILESIZE, self.End_Pos[1] * TILESIZE, TILESIZE-1, TILESIZE-1))
+    def drawNodes(self):
+        for node in self.nodes:
+            pygame.draw.rect(self.screen, node.colour, (node.pos[0]*TILESIZE,node.pos[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
 
-        for node in self.route:
-            pygame.draw.rect(self.screen, (200, 200, 200), (node.pos[0]*TILESIZE, node.pos[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
+        pygame.draw.rect(self.screen, (255, 100, 100), (self.start[0]*TILESIZE,self.start[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
+        pygame.draw.rect(self.screen, (100, 100, 255), (self.end[0]*TILESIZE,self.end[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
 
-    def next_node(self, pos):
+    def currentTile(self, pos, previousFCost):
         for i in range(3):
             for j in range(3):
                 x = (pos[0] - 1) + j
                 y = (pos[1] - 1) + i
 
-                if (i,j) != (1,1) and (x*TILESIZE,y*TILESIZE) not in BOUNDARIES:
-                    self.nodes.append(Node((x,y), self.Start_Pos, self.End_Pos))
+                if (x,y) not in self.nodePositions and (j,i) != (1,1):
+                    self.nodes.append(Node((x,y), self.start, self.end, previousFCost, pos))
+                    self.nodePositions.append((x,y))
 
-        #Find Lowest Total Dist
-        LOWEST_TOTAL_DIST_ARRAY = []
-        for index, node in enumerate(self.nodes):
-            LOWEST_TOTAL_DIST_ARRAY.append([node.TotalDist, index])
+        for node in self.nodes:
+            if node.pos == self.end:
+                return
+            if node.boundary:
+                self.nodes.remove(node)
+
+        self.findLowestGCost()
+        self.findLowestHCost()
+
+        self.next_tile()
+
+    def findLowestGCost(self):
+        self.LOWEST_G_COST = self.nodes[0].G_COST
+        for node in self.nodes:
+            if node.G_COST < self.LOWEST_G_COST:
+                self.LOWEST_G_COST = node.G_COST
+
+        for node in self.nodes:
+            if node.G_COST == self.LOWEST_G_COST:
+                self.currentNodes.append(node)
+
         
-        LOWEST_TOTAL_DIST_ARRAY = self.findLowestValue(LOWEST_TOTAL_DIST_ARRAY)
-
-        self.nodes.append(LOWEST_TOTAL_DIST_ARRAY[0])
-
-        LOWEST_END_DIST_ARRAY = []
-        for index, node in enumerate(self.nodes):
-            LOWEST_END_DIST_ARRAY.append([node.DistToEnd, index])
+    def findLowestHCost(self):
+        self.LOWEST_H_COST = self.nodes[0].H_COST
+        for node in self.currentNodes:
+            if node.H_COST < self.LOWEST_H_COST:
+                self.LOWEST_H_COST = node.H_COST
 
 
-        self.route.append(self.nodes[LOWEST_END_DIST_ARRAY[0][1]])
-
-        if self.i != 5:
-            self.i+=1
-            self.next_node(self.route[0].pos)
-
-    def findLowestValue(self, array):
-        array.sort()
-        i=1
-        while len(array) != i:
-            if array[i][0] != array[0][0]:
-                array.pop(i)
-            else:
-                i+=1
-        
-        return array
-
+    def next_tile(self):
+        print("====")
+        for node in self.nodes:
+            print(node.H_COST, node.F_COST, node.G_COST)
+            if node.G_COST == self.LOWEST_G_COST and node.H_COST == self.LOWEST_H_COST and  self.i != 6:
+                node.colour = (75 ,75, 75)
+                self.i += 1
+                self.currentTile(node.pos, node.F_COST)
+                return

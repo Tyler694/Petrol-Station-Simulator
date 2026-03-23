@@ -20,8 +20,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    
 
-    pathfind.draw()
+    pathfind.drawNodes()
 
 
     clock.tick(60)
