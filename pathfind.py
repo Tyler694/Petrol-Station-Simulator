@@ -4,9 +4,9 @@ from node import *
 
 class Pathfind:
 
-    def __init__(self):
-        self.start = (2, 2)
-        self.end = (69,64)
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
 
         self.nodePos = []
         self.openNodes = []
@@ -32,7 +32,7 @@ class Pathfind:
             node = node.parentNode
 
     def drawNodes(self):
-        for node in self.closedNodes:
+        for node in self.path:
             pygame.draw.rect(self.screen, (100,100,150), (node.pos[0]*TILESIZE,node.pos[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
 
         pygame.draw.rect(self.screen, (255, 100, 100), (self.start[0]*TILESIZE,self.start[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
@@ -54,19 +54,17 @@ class Pathfind:
                 if (x*TILESIZE,y*TILESIZE) not in BOUNDARIES and (j,i) != (1,1) and (x,y) not in self.nodePos:
                     tempNode = Node((x,y), self.end, previousNode)
 
-                    self.openNodes.append(tempNode)
+                    if tempNode.H_COST < self.startNode.H_COST:
+                        self.openNodes.append(tempNode)
 
                 if (x,y) == self.end:
                     return
-        
-        while len(self.openNodes) != 0:
-            self.i+=1
-            self.next_node()
+                
+        self.next_node()
 
 
     def next_node(self):
-        currentNodes = self.findLowestF()
-        currentNode = self.findLowestH(currentNodes)
+        currentNode = self.findLowestF()
         
         self.openNodes.remove(currentNode)
         self.closedNodes.append(currentNode)
@@ -77,21 +75,8 @@ class Pathfind:
 
     def findLowestF(self):
         currentNode = self.openNodes[0]
-        currentNodes = []
         for node in self.openNodes:
             if node.F_COST < currentNode.F_COST:
-                currentNode = node
-
-        for node in self.openNodes:
-            if node.F_COST == currentNode.F_COST:
-                currentNodes.append(node)
-        currentNodes.append(currentNode)
-        return currentNodes
-
-    def findLowestH(self, currentNodes):
-        currentNode = currentNodes[0]
-        for node in currentNodes:
-            if node.H_COST < currentNode.H_COST:
                 currentNode = node
         return currentNode
 

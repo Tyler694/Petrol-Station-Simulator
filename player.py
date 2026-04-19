@@ -1,4 +1,5 @@
 import pygame
+from settings import *
 
 class Player():
     def __init__(self):
@@ -27,11 +28,11 @@ class Player():
             vx += 1
         
         #COLLISIONS
-        for boundary in boundaries:
-            if (((self.px + self.playerTileSize) + (vx * self.speed)) > boundary.x*self.boundaryTileSize
-                 and ((self.px) + (vx * self.speed)) < (boundary.x*self.boundaryTileSize)+self.boundaryTileSize
-                   and ((self.py + self.playerTileSize) + (vy * self.speed)) > boundary.y*self.boundaryTileSize
-                     and ((self.py) + (vy * self.speed)) < (boundary.y*self.boundaryTileSize)+self.boundaryTileSize):
+        for boundary in BOUNDARIES:
+            if (((self.px + self.playerTileSize) + (vx * self.speed)) > boundary[0]
+                 and ((self.px) + (vx * self.speed)) < (boundary[0])+self.boundaryTileSize
+                   and ((self.py + self.playerTileSize) + (vy * self.speed)) > boundary[1]
+                     and ((self.py) + (vy * self.speed)) < (boundary[1])+self.boundaryTileSize):
                 self.speed = 0
 
         self.py += vy * self.speed

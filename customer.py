@@ -1,12 +1,12 @@
 import pygame
 import random
 from assets import *
+from pathfind import *
 
 class Customer:
 
-    def __init__(self, clock, pump):
+    def __init__(self, pump):
         self.screen = pygame.display.get_surface()
-        self.clock = clock
 
         #CUSTOMER ITEMS
         self.items = []
@@ -15,7 +15,7 @@ class Customer:
 
         #CUSTOMER LOGIC
         #self.x,self.y = 690,640
-        self.x,self.y = -100,-100
+        self.x,self.y = 100,100
         self.paid = False
 
         #CHECKOUT GUI
@@ -74,16 +74,11 @@ class Customer:
 
         self.CustomerArrivalAnimation = []
         self.FirstFrame = True
-
-    def closeTimer(self):
-        self.closeDelay -= self.clock.get_time() / 1000
-
-        if self.closeDelay < 0:
-            self.closeDelay = 3
-            return True
         
+        self.chooseItems()
 
-
+        pathfind = Pathfind((self.x // TILESIZE, self.y // TILESIZE), (690//TILESIZE,640//TILESIZE))
+        
     def chooseItems(self):
         #Chooses a random number, this is the number of items the customer will have.
         #Choose a random item, this will be the item the customer will have.
@@ -99,57 +94,6 @@ class Customer:
 
     def drawCustomer(self):
         pygame.draw.rect(self.screen, (255,0,0), (self.x, self.y,20,20))
-        self.animateCustomer()
-
-    def animateCustomer(self):
-        if self.pump == 4:
-            if self.FirstFrame:
-                self.Cx,self.Cy = 350, -300
-                self.CustomerArrivalAnimation = [[350,450,False,5],[690,500,False,5],[690,640,False,5]]
-                self.FirstFrame = False
-        if self.pump == 3:
-            if self.FirstFrame:
-                self.Cx,self.Cy = 100, -300
-                self.CustomerArrivalAnimation = [[100,450,False,5],[50,800,False,5],[450,800,False,5],[450,500,False,-5],[690,500,False,5],[690,640,False,5]]
-                self.FirstFrame = False
-        if self.pump == 2:
-            if self.FirstFrame:
-                self.Cx,self.Cy = 100, -300
-                self.CustomerArrivalAnimation = [[100,150,False,5],[50,80,False,-5],[450,80,False,5],[450,500,False,5],[690,500,False,5],[690,640,False,5]]
-                self.FirstFrame = False
-        if self.pump == 1:
-            if self.FirstFrame:
-                self.Cx,self.Cy = 350, -300
-                self.CustomerArrivalAnimation = [[350,150,False,5],[490,500,False,5],[690,500,False,5],[690,640,False,5]]
-                self.FirstFrame = False
-        for Frame, KeyFrame in enumerate(self.CustomerArrivalAnimation):
-            if Frame == 0 and KeyFrame[2] == False:
-                self.Cx,self.Cy,KeyFrame[2] = self.keyFrame(KeyFrame[0],KeyFrame[1],self.Cx,self.Cy,KeyFrame[2],KeyFrame[3])
-                if KeyFrame[2] and self.pump == 4:
-                    self.x, self.y = 450, 500
-                if KeyFrame[2] and self.pump == 3:
-                    self.x, self.y = 50, 500
-                if KeyFrame[2] and self.pump == 2:
-                    self.x, self.y = 50, 200
-                if KeyFrame[2] and self.pump == 1:
-                    self.x, self.y = 490, 190
-            if self.CustomerArrivalAnimation[Frame-1][2]:
-                self.x,self.y,KeyFrame[2] = self.keyFrame(KeyFrame[0],KeyFrame[1],self.x,self.y,KeyFrame[2],KeyFrame[3])
-
-        self.screen.blit(self.car, (self.Cx, self.Cy))
-
-    def keyFrame(self, Kx, Ky, x, y, Finished, speed):
-        #pygame.draw.rect(self.screen, (0,255,255), (Kx, Ky, 50, 50))
-
-        if Finished == False:
-            while x != Kx:
-                return x + speed, y, Finished
-            while y != Ky:
-                return x, y + speed, Finished
-            
-        Finished = True
-        return x, y, Finished
-
     
     def payGUI(self):
         #BLITING GUI
@@ -161,7 +105,7 @@ class Customer:
         else:
             pygame.draw.rect(self.screen, (91, 167, 255), (463, 483, 299, 293))
             #IF OVERCHARGED THE CUSTOMER YOU DONT GET PAID AND A SHORT DELAY BEFORE CLOSING THE GUI
-            if self.OverCharging and self.closeTimer():
+            if self.OverCharging:
                 self.paid = True
                 self.GUIOpen = False
                 self.petrolPaid = False
@@ -203,7 +147,6 @@ class Customer:
             if item[0] == "Sweets":
                 self.screen.blit(self.sweets, (self.Tx,self.Ty-111))
                 self.Ty -= 121
-
 
     #THE BLACK BAR AND THE TEXT ON THE ITEMS SIDE OF THE GUI
     def totalText(self):     

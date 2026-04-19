@@ -53,7 +53,7 @@ def drawMap():
             pygame.draw.rect(screen, (255,0,0), (tile[0], tile[1], TILESIZE, TILESIZE))
 
 while running:
-    screen.fill((50,50,50))
+    screen.blit(bg, (0,0))
 
     mouseX, mouseY = findTile()
     

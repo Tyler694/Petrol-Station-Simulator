@@ -17,13 +17,13 @@ while running:
 
     boundaries.drawBoundaries()
 
+    pygame.draw.rect(screen, (255, 255, 100), (690, 640, TILESIZE, TILESIZE))
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    
 
     pathfind.drawNodes()
-
 
     clock.tick(60)
     pygame.display.flip()
