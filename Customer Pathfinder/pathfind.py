@@ -1,101 +1,74 @@
-import pygame
-from settings import *
 from node import *
+import pygame
 
 class Pathfind:
 
-    def __init__(self):
-        self.start = (2, 2)
-        self.end = (69,64)
-
-        self.nodePos = []
-        self.openNodes = []
-        self.closedNodes = []
-        self.path = []
-        self.i = 0
-
-        self.finished = False
-
+    def __init__(self, start, end):
         self.screen = pygame.display.get_surface()
 
-        self.startNode = StartNode(self.start,self.end)
-        self.openNodes.append(self.startNode)
+        self.start = start
+        self.end = end
 
-        self.createChildren(self.startNode)
-        self.reconstructPath()
+        self.openList = []
+        self.closedList = []
+        self.path = []
+        self.evaluatedNodes = []
 
-    def reconstructPath(self):
-        node = self.closedNodes[-1]
+        self.startNode = Node(self.start, self.end, None)
+        self.openList.append(self.startNode)
+        self.evaluatedNodes.append(self.startNode.pos)
 
-        while node != self.startNode:
+        self.search = True
+
+        self.i = 0
+
+    def reconstruct_path(self):
+        node = self.closedList[-1]
+        while node != None:
             self.path.append(node)
             node = node.parentNode
 
-    def drawNodes(self):
-        for node in self.closedNodes:
-            pygame.draw.rect(self.screen, (100,100,150), (node.pos[0]*TILESIZE,node.pos[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
+    def drawPath(self):
+        for node in self.path:
+            pygame.draw.rect(self.screen, (255,100,100), (node.pos[0]*TILESIZE, node.pos[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
 
-        pygame.draw.rect(self.screen, (255, 100, 100), (self.start[0]*TILESIZE,self.start[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
-        pygame.draw.rect(self.screen, (100, 100, 255), (self.end[0]*TILESIZE,self.end[1]*TILESIZE,TILESIZE-1,TILESIZE-1))
+        pygame.draw.rect(self.screen, (100,255,100), (self.end[0]*TILESIZE, self.end[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
+        pygame.draw.rect(self.screen, (100,100,255), (self.start[0]*TILESIZE, self.start[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
 
-    def createChildren(self, previousNode):
-        for node in self.openNodes:
-            self.nodePos.append(node.pos)
+    def createPath(self):
+        while len(self.openList) > 0 and self.search != False:
+            currentNode = self.findLowestFCost()
 
+            self.openList.remove(currentNode)
+            self.closedList.append(currentNode)
+
+            self.generateSuccessor(currentNode)
+
+            self.i += 1
+
+    def generateSuccessor(self, previousNode):
         for i in range(3):
             for j in range(3):
-                if previousNode != self.startNode:
+                if (i,j) != (1,1):
                     x = (previousNode.pos[0] - 1) + j
                     y = (previousNode.pos[1] - 1) + i
-                else:
-                    x = (self.startNode.pos[0] - 1) + j
-                    y = (self.startNode.pos[1] - 1) + i
 
-                if (x*TILESIZE,y*TILESIZE) not in BOUNDARIES and (j,i) != (1,1) and (x,y) not in self.nodePos:
-                    tempNode = Node((x,y), self.end, previousNode)
+                    if (x,y) == self.end:
+                        self.search = False
+                        self.reconstruct_path()
+                        return
 
-                    self.openNodes.append(tempNode)
+                    if (x*TILESIZE,y*TILESIZE) not in BOUNDARIES and (x,y) not in self.evaluatedNodes:
+                        succesor = Node((x,y), self.end, previousNode)
 
-                if (x,y) == self.end:
-                    return
-        
-        while len(self.openNodes) != 0:
-            self.i+=1
-            self.next_node()
+                        succesor.calculateCosts()
+                        self.openList.append(succesor)
+                        self.evaluatedNodes.append(succesor.pos)
 
-
-    def next_node(self):
-        currentNodes = self.findLowestF()
-        currentNode = self.findLowestH(currentNodes)
-        
-        self.openNodes.remove(currentNode)
-        self.closedNodes.append(currentNode)
-
-        self.nodePos.clear()
-
-        self.createChildren(currentNode)
-
-    def findLowestF(self):
-        currentNode = self.openNodes[0]
-        currentNodes = []
-        for node in self.openNodes:
+    def findLowestFCost(self):
+        currentNode = self.openList[0]
+        for node in self.openList:
             if node.F_COST < currentNode.F_COST:
                 currentNode = node
-
-        for node in self.openNodes:
-            if node.F_COST == currentNode.F_COST:
-                currentNodes.append(node)
-        currentNodes.append(currentNode)
-        return currentNodes
-
-    def findLowestH(self, currentNodes):
-        currentNode = currentNodes[0]
-        for node in currentNodes:
-            if node.H_COST < currentNode.H_COST:
-                currentNode = node
+        
         return currentNode
-
-
-
-
-
