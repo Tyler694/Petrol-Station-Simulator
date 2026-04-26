@@ -10,18 +10,23 @@ running = True
 pygame.display.set_caption("Pathfinding Algorithm - Tyler694")
 
 boundaries = BoundariesClass()
-pathfind = Pathfind((5,5), (64, 59))
-pathfind.createPath()
+#pathfind = Pathfind((3, 25), (107, 47))
+#pathfind = Pathfind((20, 31), (117, 31))
+pathfind = Pathfind((6, 4), (66, 82))
 
 while running:
     screen.fill((10,10,10))
 
+    pathfind.createPath()
+
     boundaries.drawBoundaries()
     pathfind.drawPath()
+
+    pathfind.reconstruct_path()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    clock.tick(60)
+    clock.tick(165)
     pygame.display.flip()

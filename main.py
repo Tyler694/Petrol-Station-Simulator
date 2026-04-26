@@ -29,7 +29,12 @@ class Game:
 
     def customerInit(self):
         for customer in self.customers:
-            customer.drawCustomer()
+            if customer.readySpawn:
+                customer.drawCustomer()
+                customer.move_customer()
+                customer.pay(self.player.px, self.player.py)
+            else:
+                customer.move_car()
 
 
     def run(self):

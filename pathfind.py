@@ -20,30 +20,20 @@ class Pathfind:
 
         self.search = True
 
-        self.pathNode = None
-
         self.i = 0
 
     def reconstruct_path(self):
-        if self.search == False:
-            if self.pathNode != None:
-                self.path.append(self.pathNode)
-                self.pathNode = self.pathNode.parentNode
+        node = self.closedList[-1]
+        while node != None:
+            self.path.append(node)
+            node = node.parentNode
 
     def drawPath(self):
-        for node in self.openList:
-            pygame.draw.rect(self.screen, (255,100,100), (node.pos[0]*TILESIZE, node.pos[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
-        for node in self.closedList:
-            pygame.draw.rect(self.screen, (255,255,100), (node.pos[0]*TILESIZE, node.pos[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
         for node in self.path:
-            pygame.draw.rect(self.screen, (255,100,255), (node.pos[0]*TILESIZE, node.pos[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
-
-
-        pygame.draw.rect(self.screen, (100,255,100), (self.end[0]*TILESIZE, self.end[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
-        pygame.draw.rect(self.screen, (100,100,255), (self.start[0]*TILESIZE, self.start[1]*TILESIZE, TILESIZE-1, TILESIZE-1))
+            pygame.draw.rect(self.screen, (255,100,100), (node.pos[0]*TILESIZE, node.pos[1]*TILESIZE, TILESIZE, TILESIZE))
 
     def createPath(self):
-        if len(self.openList) > 0 and self.search != False:
+        while len(self.openList) > 0 and self.search != False:
             currentNode = self.findLowestFCost()
 
             self.openList.remove(currentNode)
@@ -60,16 +50,14 @@ class Pathfind:
                     x = (previousNode.pos[0] - 1) + j
                     y = (previousNode.pos[1] - 1) + i
 
-                    if (x,y) == self.end and self.search:
+                    if (x,y) == self.end:
                         self.search = False
-                        self.pathNode = self.closedList[-1]
                         self.reconstruct_path()
-
+                        return
                     if (x*TILESIZE,y*TILESIZE) not in BOUNDARIES and (x,y) not in self.evaluatedNodes:
                         succesor = Node((x,y), self.end, previousNode)
 
                         succesor.calculateCosts()
-
                         self.openList.append(succesor)
                         self.evaluatedNodes.append(succesor.pos)
 

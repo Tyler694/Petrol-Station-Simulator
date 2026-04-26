@@ -15,8 +15,10 @@ class Customer:
 
         #CUSTOMER LOGIC
         #self.x,self.y = 690,640
-        self.x,self.y = 100,100
+        self.x,self.y = 35,160
         self.paid = False
+
+        self.readySpawn = False
 
         #CHECKOUT GUI
         self.GUIOpen = False
@@ -64,8 +66,7 @@ class Customer:
 
         self.closeDelay = 3
 
-        self.Cx,self.Cy = 350, -300
-        self.Tx, self.Ty = 957, 151
+        self.Cx,self.Cy = 100, -300
         
         #CUSTOMER ARRIVAL ANIMATION
         self.FinishedKeyFrame1 = False
@@ -74,10 +75,9 @@ class Customer:
 
         self.CustomerArrivalAnimation = []
         self.FirstFrame = True
-        
-        self.chooseItems()
 
-        pathfind = Pathfind((self.x // TILESIZE, self.y // TILESIZE), (690//TILESIZE,640//TILESIZE))
+        self.pathfind = Pathfind((self.x // TILESIZE, self.y // TILESIZE), (700 // TILESIZE, 650 // TILESIZE))
+        self.i = 0
         
     def chooseItems(self):
         #Chooses a random number, this is the number of items the customer will have.
@@ -93,8 +93,9 @@ class Customer:
             self.total += item[1]
 
     def drawCustomer(self):
+        self.screen.blit(self.car, (self.Cx,self.Cy))
         pygame.draw.rect(self.screen, (255,0,0), (self.x, self.y,20,20))
-    
+
     def payGUI(self):
         #BLITING GUI
         self.screen.blit(self.checkoutGUI, (0,0))
@@ -228,3 +229,30 @@ class Customer:
 
                 if self.GUIOpen:
                     self.payGUI()
+
+    def move_car(self):
+        if self.Cy != 150:
+            self.Cy += 5
+            self.screen.blit(self.car, (self.Cx,self.Cy))
+        else:
+            self.readySpawn = True
+            self.pathfind.createPath()
+
+
+    def move_customer(self):
+        index = (len(self.pathfind.path) - self.i) - 1
+        currentGoal = self.pathfind.path[index].pos
+        
+        if (self.x < (currentGoal[0])*TILESIZE):
+            self.x += 2.5
+        if (self.y < (currentGoal[1])*TILESIZE):
+            self.y += 2.5
+
+        if (self.x > (currentGoal[0])*TILESIZE):
+            self.x -= 2.5
+        if (self.y > (currentGoal[1])*TILESIZE):
+            self.y -= 2.5
+        
+        if currentGoal == (self.x // TILESIZE, self.y // TILESIZE) and self.i != len(self.pathfind.path) - 1:
+            self.i += 1
+        print(currentGoal, (self.x // TILESIZE, self.y // TILESIZE))
